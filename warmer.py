@@ -2,18 +2,23 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import sys
 import time
+import requests
+import xml.etree.ElementTree as ET
 
 
 def main(url):
     print("Loading %s" % url)
-    soup = BeautifulSoup(urlopen(url))
-    tags = soup.find("div", id="sitemap_content").findAll("a")
+    response = requests.get(url)
+    xml_content = response.content
+    
+    root = ET.fromstring(xml_content)
+    namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+    
     links = []
-    for tag in tags:
-        links.append(tag["href"])
-    tags = soup.find("div", id="listpage_content").findAll("a")
-    for tag in tags:
-        links.append(tag["href"])
+    for url in root.findall('ns:url/ns:loc', namespace):
+        if url.text.find(".html") != -1:
+            links.append(url.text)
+
     fetch(links)
 
 
