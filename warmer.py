@@ -24,12 +24,15 @@ def main(url):
 
 def fetch(urls):
     for url in urls:
-        nf = urlopen(url)
-        start = time.time()
-        nf.read()
-        end = time.time()
-        nf.close()
-        print("Warm up: {0}\t\tTime taken: {1} ms".format(url, round((end - start) * 1000)))
+        try:
+            nf = urlopen(url)
+            start = time.time()
+            nf.read()
+            end = time.time()
+            nf.close()
+            print("Warm up: {0}\t\tTime taken: {1} ms".format(url, round((end - start) * 1000)))
+        except:
+            print("Error {0}".format(url))
 
 
 def _usage():
